@@ -1,14 +1,15 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Episode from './../Episode';
+import { renderSync } from 'sass';
 
 const testEpisode = {
     id:1,
     name: "",
-    image: "http://static.tvmaze.com/uploads/images/medium_landscape/67/168918.jpg",
+    image: null,
     season: 1,
     number: 1,
-    summary: "",
+    summary: "exact string",
     runtime: 1
 }
 
@@ -17,18 +18,30 @@ const testEpisodeWithoutImage = {
 }
 
 test("renders without error", () => {
-
+render(<Episode episode={testEpisode}/>)
 });
 
 test("renders the summury test passed as prop", ()=>{
-    
+    render(<Episode episode={testEpisode}/>);
+    const expected = screen.getByRole(/img/i)
+    expect(expected).toBeInTheDocument()
+    expect(expected).toBeTruthy()
+    expect(expected).toBeVisible()
+
 });
 
 test("renders default image when image is not defined", ()=>{
+    render(<Episode episode={testEpisode}/>);
     
+    const expected = screen.queryByAltText(/stranger_things.png/i)
+    expect(expected).toBeInTheDocument();
+
 })
 
+
 //Tasks
-//1. Complete a test that shows the Episode component renders. Pass in the provided example episode data as a test prop.
-//2. Modify the test data to display a specific summary statement. Complete a test that shows that the summary value passed in to the Episode component displays as expected. Use no more then 3 different expect statements to test the the existance of the summary value.
+//1. Complete a test that shows the Episode component renders. Pass in the provided example episode data as a test prop.* done
+
+//2. Modify the test data to display a specific summary statement. Complete a test that shows that the summary value passed in to the Episode component displays as expected. Use no more then 3 different expect statements to test the the existance of the summary value.* done
+
 //3. The episode component displays a default value ('./stranger_things.png') when a image url is not provided. Create a new piece of test data with the image property set to null. Test that the alt tag of the image displayed is set to './stranger_things.png'.

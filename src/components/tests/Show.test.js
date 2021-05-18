@@ -1,27 +1,63 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { queryAllByText, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import Show from './../Show';
 
-const testShow = {
-    //add in approprate test data structure here.
-}
-
+export const testShow ={
+    name:"The BlackList",
+     summary:"",
+     seasons:[{
+        id:1,
+        name:"season 1",
+        episodes:[{id:1, image:"", name:"test", season:"2", number:1, summary:"", runtime :""  
+        }] 
+},{
+        id:2,
+        name:"season 2",
+        episodes:[{}] 
+}]}
 test('renders testShow and no selected Season without errors', ()=>{
+    render(<Show show={testShow} selectedSeason={"none"}/>)
 });
 
 test('renders Loading component when prop show is null', () => {
+    render(<Show show={null} selectedSeason={"none"}/>)
+    const expected = screen.getByText(/Fetching data/i)
+    expect(expected).toBeInTheDocument()
+
 });
 
 test('renders same number of options seasons are passed in', ()=>{
+render(<Show show={testShow} selectedSeason={"none"}/>);
+const expected = screen.getAllByTestId(/season-option/i)
+expect(expected).toHaveLength(2)
 });
 
-test('handleSelect is called when an season is selected', () => {
-});
+test("handleSelect is called when an season is selected", () => {
+    const fakeSeason = jest.fn();
+  
+    render(
+      <Show handleSelect={fakeSeason} show={testShow} selectedSeason={"none"} />
+    );
+    const clicked =  screen.getByLabelText("Select A Season")
+    userEvent.selectOptions(clicked, ["1"]);
+    expect(fakeSeason).toHaveBeenCalled();
+  });
 
-test('component renders when no seasons are selected and when rerenders with a season passed in', () => {
-});
+  test("component renders when no seasons are selected and when rerenders with a season passed in", () => {
+    const FakeSeason = jest.fn();
+  
+      const {rerender} = render(<Show handleSelect={FakeSeason} show={testShow} selectedSeason={'none'} />)
+      let episodes = screen.queryByTestId('episodes-container')
+      expect(episodes).not.toBeInTheDocument();
+  
+  
+      rerender(<Show handleSelect={FakeSeason} show={testShow} selectedSeason={1} />)
+      episodes = screen.queryByTestId('episodes-container')
+      expect(episodes).toBeInTheDocument();
+  
+  });
 
 //Tasks:
 //1. Build an example data structure that contains the show data in the correct format. A show should contain a name, a summary and an array of seasons, each with a id, name and (empty) list of episodes within them. Use console.logs within the client code if you need to to verify the structure of show data.
